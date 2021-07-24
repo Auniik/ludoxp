@@ -41,15 +41,15 @@
                 const score = this.score;
 
                 if (Array.from(score).length == 1) {
-                    return "o ".repeat(score[0])
+                    return "• ".repeat(score[0])
                 }
                 if (Array.from(score).length == 2) {
-                    return "o ".repeat(score[1])
+                    return "• ".repeat(score[1])
                 }
                 if (Array.from(score).length == 3) {
-                    return "o ".repeat(score[3])
+                    return "• ".repeat(score[3])
                 }
-                return "o o o o o o";
+                return "• • • • • •";
             }
         }
     }
@@ -61,16 +61,19 @@
     .dice {
         width: 80px;
         height: 80px;
-        margin-left: 10%;
+        margin: 10px;
         background: #d8d8d8;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
+        border-radius: 10px;
     }
 
     .dice-digit {
-        font-size: 25px;
-        padding: 5px;
+        font-size: 35px;
+        display: flex;
+        font-weight: bolder;
+        margin: inherit;
     }
 </style>
