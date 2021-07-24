@@ -1,0 +1,9 @@
+.board-outside {
+    width: 40vh;
+    height: 40vh;
+    display: inline-block;
+    background: #F5F8FA;
+    margin-left: 10%;
+    margin-top: 10%;
+    border-style: ridge;
+}
