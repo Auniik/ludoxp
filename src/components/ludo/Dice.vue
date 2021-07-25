@@ -1,19 +1,26 @@
 <template>
 
     <div @click="roll" :style="styles" class="dice">
-        <div class="dice-digit">
-            {{getScore}}
+        <div class="dice-digit" v-html="getScore">
+            
         </div>
     </div>
+
+    <!-- <div @click="roll" :style="styles" class="dice">
+        <div class="dice-digit" >
+            <div>⊚ </div>
+            <div>⊚ </div>
+        </div>
+    </div> -->
 
 </template>
 
 <script>
-    import Dice from '../../mixins/Dice';
+    import DiceMixin from '../../mixins/DiceMixin';
 
     export default {
         name: 'Dice',
-        mixins: [Dice],
+        mixins: [DiceMixin],
         props: {
             id: Number,
             styles: String,
@@ -27,12 +34,12 @@
         },
         methods: {
             roll() {
-                if (this.id != Dice.eligibleUnit) {
+                if (this.id != DiceMixin.eligibleUnit) {
                     return;
                 }
-                Dice.roll()
+                DiceMixin.roll()
 
-                this.$emit('rolled', Dice)
+                this.$emit('rolled', DiceMixin)
 
             }
         },
@@ -40,16 +47,13 @@
             getScore() {
                 const score = this.score;
 
-                if (Array.from(score).length == 1) {
-                    return "• ".repeat(score[0])
+                console.log(this.score[0]);
+
+                if (Array.from(score).length) {
+                    return "⊚ ".repeat(score[0])
                 }
-                if (Array.from(score).length == 2) {
-                    return "• ".repeat(score[1])
-                }
-                if (Array.from(score).length == 3) {
-                    return "• ".repeat(score[3])
-                }
-                return "• • • • • •";
+                
+                return "⊚ ⊚ ⊚ ⊚ ⊚ ⊚ ";
             }
         }
     }
@@ -71,7 +75,7 @@
     }
 
     .dice-digit {
-        font-size: 35px;
+        font-size: 19px;
         display: flex;
         font-weight: bolder;
         margin: inherit;
