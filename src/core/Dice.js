@@ -3,16 +3,17 @@ const _ = require('lodash')
 
 class Dice {
 
-	eligibleUnit = 0;
 
-    sixCarrier = 0;
-
-    score = { 
+	score  = { 
 		0: { used: [], unused: [] }, 
 		1: { used: [], unused: [] }, 
 		2: { used: [], unused: [] }, 
 		3: { used: [], unused: [] }
-	};
+	}
+
+	eligibleUnit = 0;
+
+    sixCarrier = 0;
 
 	round = 1;
 
@@ -20,19 +21,17 @@ class Dice {
 
     isRoundCompleted = false;
 
+	isBreakForNext = false;
+
 	roll(mockScore = null) {
 
-		if(this.eligibleUnit != this.roller) {
-			return 'Mama pore maro!'
-		}
+		this.roller = this.eligibleUnit
 
 		let count = mockScore || this.randomCount();
 
-		// if(count != 6) {
-		if (!this.canBeRolled(count)) {
+		if (this.isBreakForNext) {
 			return 'Pawn Move required!';
 		}
-		// }
 
 		
         if(this.isRoundCompleted) 
@@ -49,14 +48,15 @@ class Dice {
             this.sixCarrier += 1
             
             if(this.sixCarrier == 3) {
-                this.reInitScore()
-                this.turnNext()
+                this.reInitScore();
+                this.turnNext();
             }
             return this.getScore();
         }
         
         this.sixCarrier = 0;
-        this.turnNext()
+
+        this.turnNext();
         return this.getScore();
     }
 
@@ -69,52 +69,45 @@ class Dice {
 		this.score[this.eligibleUnit]['unused'].push(count)
 	}
 
-	canBeRolled(count) {
-		const {used, unused} = this.getScore()
-
-		if(!_.size(used) && !_.size(unused)) {
-			return true;
-		}
-
-		if(unused.every(e => e === 6)) {
-			return true;
-		}
-
-		// if(6 in scoresOfRoller) {
-		// 	return true;
-		// }
-
-		// const isFalse = Object.values(scoresOfRoller).filter(e => e)
-		
-		// return !!_.size(isFalse)
-	}
-
 	getScore() {
 		return this.score[this.roller]
 	}
 
 	moveableScores() {
-		return Object.keys(this.getScore());
+		//return Object.keys(this.getScore());
 	}
 
 	movePawn(count) {
-		if (!count in this.getScore()) {
-			console.log('DON\'T be bad I\'m your dad!');
-			return;
+	
+		let { used, unused } = this.score[this.roller];
+
+		if (!unused.includes(count)) {
+			return 'DON\'T be bad I\'m your dad!';
 		}
 
-		this.score[this.roller] = {...this.getScore(), ...{[count]: true}}
+		const index = unused.findIndex(l => l === count);
+		used = [ ...used, ...unused.splice(index, 1) ];
+
+		this.isBreakForNext = !!_.size(unused)
+
+		this.score[this.roller] = { used, unused };
+
 		return 'Pawn Moved'
 	}
 
     turnNext() {
+		const {unused} = this.getScore();
+		
+
         if(this.eligibleUnit == 3) {
-            this.eligibleUnit = 0
-            this.isRoundCompleted = true
-            return
+            this.eligibleUnit = 0;
+            this.isRoundCompleted = true;
+            return this.isBreakForNext = false;
         }
+		
     
         this.eligibleUnit++;
+		return this.isBreakForNext = !!_.size(unused);
     }
 
     resetFullScore() {
@@ -137,57 +130,60 @@ class Dice {
 }
 const dice = new Dice()
 
-dice.setRoller(0)
-
-console.log(dice.roll(6));
-
-console.log(dice.roll(6));
-
-console.log(dice.roll(6));
-
-
-dice.setRoller(1);
-
-console.log(dice.roll(6));
-
-console.log(dice.roll(6));
-
-console.log(dice.roll(2));
-
-console.log(dice.roll(2));
-
-
-dice.setRoller(2);
-
-
-console.log(dice.roll(6));
 
 console.log(dice.roll(1));
 
-console.log(dice.roll(3));
+console.log(dice.roll(2));
 
-console.log(dice.roll(4));
+console.log(dice.movePawn(6));
+console.log(dice.movePawn(5));
 
 
-dice.setRoller(3);
+
+console.log(dice.roll(6));
 
 console.log(dice.eligibleUnit);
 
-console.log(dice.roll(5));
+console.log(dice.roll(6))
 
-console.log(dice.roll(6));
 
-console.log(dice.roll(1));
+// console.log(dice.roll(6));
 
 console.log(dice.roll(2));
+
+
+console.log(dice.roll(2));
+// console.log(dice.roll(2));
+// console.log(dice.roll(3));
+
+
+// console.log(dice.score);
+
+// console.log(dice.roll(6));
+
+// console.log(dice.roll(1));
+
+// console.log(dice.roll(3));
+
+// console.log(dice.roll(4));
+
+
+
+// console.log(dice.roll(5));
+
+// console.log(dice.roll(6));
+
+// console.log(dice.roll(1));
+
+// console.log(dice.roll(2));
 
 
 
 // console.log(diceOfRoller1.roll(2));
 
-const moveWith = diceOfRoller1.moveableScores()
+// const moveWith = diceOfRoller1.moveableScores()
 
-console.log(moveWith);
+// console.log(moveWith);
 
 
 
