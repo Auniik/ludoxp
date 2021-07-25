@@ -1,9 +1,12 @@
 <template>
 
-    <div @click="roll" :style="styles" class="dice">
-        <div class="dice-digit" v-html="getScore">
-            
+    <div :style="activeStyles" 
+        class="dice">
+
+        <div class="dice-digit" 
+            v-html="getScore()"> 
         </div>
+
     </div>
 
     <!-- <div @click="roll" :style="styles" class="dice">
@@ -16,15 +19,12 @@
 </template>
 
 <script>
-    import DiceMixin from '../../mixins/DiceMixin';
 
     export default {
         name: 'Dice',
-        mixins: [DiceMixin],
         props: {
-            id: Number,
-            styles: String,
-            score: Object
+            score: Array,
+            isDiceRollable: Boolean
         },
 
         data() {
@@ -33,27 +33,32 @@
             }
         },
         methods: {
-            roll() {
-                if (this.id != DiceMixin.eligibleUnit) {
-                    return;
-                }
-                DiceMixin.roll()
-
-                this.$emit('rolled', DiceMixin)
-
-            }
-        },
-        computed: {
             getScore() {
-                const score = this.score;
+                const score = [...this.score];
 
-                console.log(this.score[0]);
+                if(score == undefined) {
+                    return '...'
+                }
 
-                if (Array.from(score).length) {
+                if (score.length == 1) {
                     return "⊚ ".repeat(score[0])
                 }
+
+                if (score.length == 2) {
+                    return "⊚ ".repeat(score[1])
+                }
+
+                if (score.length == 3) {
+                    return "⊚ ".repeat(score[2])
+                }
                 
-                return "⊚ ⊚ ⊚ ⊚ ⊚ ⊚ ";
+                return "...";
+            },
+        },
+        computed: {
+            
+            activeStyles() {
+                return this.isDiceRollable ? "color:green; box-shadow: -3px 4px 15px 0px #bfbfbf;" : ''
             }
         }
     }
