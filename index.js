@@ -91,15 +91,16 @@ class Pawn {
 const board = {
     safe: [ 1, 8, 13, 21, 26, 34, 39, 48, 52 ],
     rollers: {
-        ...[0,1,2,3].map(index => [0, 1, 2, 3].map(i => new Pawn(index, i)))
+        ...[0, 1, 2, 3].map(index => [0, 1, 2, 3].map(i => new Pawn(index, i)))
     }
 }
 
 
-// const player1 = board.rollers[0][0]
+const player1 = board.rollers[0][0]
 
-// player1.move(6)
-// console.log(player1.move(5))
+player1.move(6)
+console.log(player1.move(5))
+
 dice.roll()
 dice.roll()
 dice.roll()
