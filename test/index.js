@@ -26,11 +26,12 @@ const dice = {
                 this.score[this.eligibleUnit] = [];
                 this.turnNext()
             }
-            return;
+            return this.score;
         }
         
         this.sixCarrier = 0;
         this.turnNext()
+        return this.score;
     },
 
     turnNext() {
