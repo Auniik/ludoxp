@@ -26,11 +26,12 @@ const dice = {
                 this.score[this.eligibleUnit] = [];
                 this.turnNext()
             }
-            return;
+            return this.score;
         }
         
         this.sixCarrier = 0;
         this.turnNext()
+        return this.score;
     },
 
     turnNext() {
@@ -91,7 +92,7 @@ class Pawn {
 const board = {
     safe: [ 1, 8, 13, 21, 26, 34, 39, 48, 52 ],
     rollers: {
-        ...[0,1,2,3].map(index => [0, 1, 2, 3].map(i => new Pawn(index, i)))
+        ...[0, 1, 2, 3].map(index => [0, 1, 2, 3].map(i => new Pawn(index, i)))
     }
 }
 
@@ -100,6 +101,8 @@ const board = {
 
 // player1.move(6)
 // console.log(player1.move(5))
+
+dice.roll()
 dice.roll()
 dice.roll()
 dice.roll()
