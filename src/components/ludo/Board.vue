@@ -131,7 +131,7 @@
 
 <script>
     import Dice from './Dice.vue'
-    import DiceMixin from './../../mixins/DiceMixin'
+    import DiceMixin from './../../core/Dice'
 
     export default {
         name: 'Board',
@@ -141,6 +141,7 @@
         data() {
             return {
                 visibleDice: 0,
+                dice: new DiceMixin,
 
                 score: {
                     0: [], 1: [], 2: [], 3: []
@@ -174,16 +175,22 @@
         },
         methods: {
             roll(rollerId) {
-                if (rollerId != DiceMixin.eligibleUnit) {
+                if (rollerId != this.dice.eligibleUnit) {
                     return;
                 }
-
-                const score = DiceMixin.roll()
-
-                this.score = {...this.score, ...score}
-
-                this.visibleDice = DiceMixin.eligibleUnit
             
+                try {
+                    const {unused} = this.dice.roll()
+                    this.score[rollerId] = [...unused]
+
+                    if(!this.dice.isBreakForNext) {
+                        this.visibleDice = this.dice.eligibleUnit
+                    }
+                    
+                } catch(e) {
+                    console.log(e);
+                }
+
             },
 
 

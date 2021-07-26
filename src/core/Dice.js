@@ -127,28 +127,32 @@ class Dice {
         return [0, 6, 5, 4, 3, 2, 1][Math.ceil(Math.random() * 6)]
     }
 }
-const dice = new Dice()
+
+module.exports = Dice;
+
+
+// const dice = new Dice()
 
 
 
-console.log(dice.roll(2));
-console.log(dice.movePawn(2));;
+// console.log(dice.roll(2));
+// console.log(dice.movePawn(2));;
 
-console.log(dice.roll(1));
-console.log(dice.movePawn(1));
+// console.log(dice.roll(1));
+// console.log(dice.movePawn(1));
 
-console.log(dice.roll(1));
-console.log(dice.movePawn(1));
-
-
-console.log(dice.roll(2));
-console.log(dice.movePawn(2));
+// console.log(dice.roll(1));
+// console.log(dice.movePawn(1));
 
 
-console.log(dice.roll(2));
-console.log(dice.movePawn(1));
+// console.log(dice.roll(2));
+// console.log(dice.movePawn(2));
 
-console.log(dice.roll(5));
+
+// console.log(dice.roll(2));
+// console.log(dice.movePawn(1));
+
+// console.log(dice.roll(5));
 
 
 
