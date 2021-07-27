@@ -1,11 +1,11 @@
-class Pawn {
+export default class Pawn {
     
     isActive = false;
     isInSafeZone = false;
     position = 0;
 
     constructor(roller, id) {
-        this.color = ['red', 'green', 'blue', 'yellow'][roller - 1];
+        this.color = ['red', 'green', 'blue', 'yellow'][roller];
         this.id = id;
     }
 

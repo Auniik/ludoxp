@@ -1,13 +1,27 @@
 <template>
 
-    <div :style="activeStyles" 
-        class="dice">
+    <div>
+        <div :style="activeStyles" 
+            class="dice">
 
-        <div class="dice-digit" 
-            v-html="getScore()"> 
+            <div class="dice-digit" v-html="getScore()"> </div>
+        
+
         </div>
-
+        <template v-if="getAllHistory().length" >
+            <div class="small-dice"
+                :key="count"
+                v-for="count of getAllHistory()"
+            >
+                <div class="dice-digit"> {{count}} </div>
+            
+            </div>
+        </template>
+        
     </div>
+
+    
+    
 
     <!-- <div @click="roll" :style="styles" class="dice">
         <div class="dice-digit" >
@@ -24,7 +38,8 @@
         name: 'Dice',
         props: {
             score: Array,
-            isDiceRollable: Boolean
+            isDiceRollable: Boolean,
+            scoreHistory: Object
         },
 
         data() {
@@ -33,6 +48,16 @@
             }
         },
         methods: {
+
+            getAllHistory() {
+                if(!this.scoreHistory) {
+                    return [];
+                }
+                const {used, unused} = this.scoreHistory;
+
+                return [...used, ...unused];
+            },
+
             getScore() {
                 const score = [...this.score];
 
@@ -84,5 +109,21 @@
         display: flex;
         font-weight: bolder;
         margin: inherit;
+    }
+
+    .small-dice {
+        width: 15px;
+        height: 15px;
+        margin: 10px;
+        background: #d8d8d8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-radius: 3px;
+    }
+
+    .small-dice > .dice-digit {
+        zoom: 0.5
     }
 </style>

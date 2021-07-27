@@ -7,12 +7,14 @@
                     :score="score[1]"
                     :isDiceRollable="visibleDice === 1"
                     key="1"
+                    :scoreHistory="scoreHistory[1]"
                 />
                 <Dice
                     @click="roll(0)"
                     :score="score[0]"
                     :isDiceRollable="visibleDice === 0"
                     key="0"
+                    :scoreHistory="scoreHistory[0]"
                 />
                 
                 
@@ -116,12 +118,14 @@
                     :score="score[2]"
                     :isDiceRollable="visibleDice === 2"
                     key="2"
+                    :scoreHistory="scoreHistory[2]"
                 />
                 <Dice
                     @click="roll(3)"
                     :score="score[3]"
                     :isDiceRollable="visibleDice === 3"
                     key="3"
+                    :scoreHistory="scoreHistory[3]"
                 />
                 
             </div>
@@ -146,6 +150,9 @@
                 score: {
                     0: [], 1: [], 2: [], 3: []
                 },
+
+                scoreHistory: {},
+
 
                 aile1: [ 
                     "5-44-31-18", "56-x-x-x", "45-32-19-6", "4-43-30-17", "55-x-x-x", 
@@ -182,6 +189,8 @@
                 try {
                     const {unused} = this.dice.roll()
                     this.score[rollerId] = [...unused]
+
+                    this.scoreHistory = this.dice.score
 
                     if(!this.dice.isBreakForNext) {
                         this.visibleDice = this.dice.eligibleUnit

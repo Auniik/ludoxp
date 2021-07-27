@@ -1,59 +1,64 @@
-const _ = require('lodash')
+import _ from 'lodash'
 
+export default class Dice {
 
-class Dice {
+	score = { 
+        0: { used: [], unused: [] }, 
+        1: { used: [], unused: [] }, 
+        2: { used: [], unused: [] }, 
+        3: { used: [], unused: [] } 
+    }
 
-
-	score  = { 
-		0: { used: [], unused: [] }, 
-		1: { used: [], unused: [] }, 
-		2: { used: [], unused: [] }, 
-		3: { used: [], unused: [] }
-	}
-
-	pawnActive = {
-		0: false,
-		1: false,
-		2: false,
-		3: false,
-	}
-
-	eligibleUnit = 0;
-
+    eligibleUnit = 0;
     sixCarrier = 0;
-
-	round = 1;
-
 	roller = 0
-
     isRoundCompleted = false;
-
 	isBreakForNext = false;
 
+    rollerHasActivePawn = false
+
 	roll(mockScore = null) {
+        
+        let count = mockScore || this.randomCount();
+        this.roller = this.eligibleUnit
+        
+        
+        if(!this.rollerHasActivePawn && count != 6) {
+            if(!_.size(this.getScore()?.unused)) {
+                this.turnNext();
+                return this.getScore();
+            }
+            if(this.sixCarrier == 3) {
+                this.reInitScore();
+                this.turnNext();
+                return this.getScore()
+            }
+        }
 
-		this.roller = this.eligibleUnit
-
-		let count = mockScore || this.randomCount();
-
+        if(!this.rollerHasActivePawn) {
+            if(this.isBreakForNext && count == 6) {
+                this.isBreakForNext = false;
+                if(this.sixCarrier == 3) this.sixCarrier = 0;
+            }
+        }
+        
+        
 		if (this.isBreakForNext) {
 			throw Error('Pawn Move required!');
 		}
-
-		
+        
         if(this.isRoundCompleted) 
 			this.resetFullScore();
 
-        if(this.score[this.eligibleUnit] === undefined) 
-            this.reInitScore()
-
+            
         this.pushScore(count)
 
         this.isRoundCompleted = false
 
+        
+        
         if(count == 6) {
             this.sixCarrier += 1
-            
             if(this.sixCarrier == 3) {
                 this.reInitScore();
                 this.turnNext();
@@ -67,11 +72,6 @@ class Dice {
         return this.getScore();
     }
 
-	setRoller(roller) {
-		this.roller = roller;
-		return this;
-	}
-
 	pushScore(count) {
 		this.score[this.eligibleUnit]['unused'].push(count)
 	}
@@ -80,11 +80,7 @@ class Dice {
 		return this.score[this.roller]
 	}
 
-	moveableScores() {
-		//return Object.keys(this.getScore());
-	}
-
-	movePawn(count) {
+	movePawn(count, pawn) {
 		
 		let { used, unused } = this.score[this.roller];
 
@@ -99,10 +95,18 @@ class Dice {
 
 		this.isBreakForNext = !!_.size(unused)
 
+        const { position } = pawn.move(count)
+
+        if(! position ) {
+            used = unused = [];
+        }
+
 		this.score[this.roller] = { used, unused };
+        
 
 		return 'Pawn Moved'
 	}
+
 
     turnNext() {
 
@@ -113,17 +117,13 @@ class Dice {
         }
 		
         this.eligibleUnit++;
-		return this.isBreakForNext = !!_.size(this.getScore()?.unused);
+		this.isBreakForNext = !!_.size(this.getScore()?.unused);
+        return;
     }
 
     resetFullScore() {
-        this.score = { 
-			0: { used: [], unused: [] }, 
-			1: { used: [], unused: [] }, 
-			2: { used: [], unused: [] }, 
-			3: { used: [], unused: [] }
-		}
-        this.round++ 
+        const e = { used: [], unused: [] }
+        this.score = { 0: e, 1: e, 2: e, 3: e }
     }
 
 	reInitScore() {
@@ -134,33 +134,3 @@ class Dice {
         return [0, 6, 5, 4, 3, 2, 1][Math.ceil(Math.random() * 6)]
     }
 }
-
-module.exports = Dice;
-
-
-// const dice = new Dice()
-
-
-
-// console.log(dice.roll(2));
-// console.log(dice.movePawn(2));
-
-// console.log(dice.roll(1));
-// console.log(dice.movePawn(1));
-
-// console.log(dice.roll(1));
-// console.log(dice.movePawn(1));
-
-
-// console.log(dice.roll(2));
-// console.log(dice.movePawn(2));
-
-
-// console.log(dice.roll(2));
-// console.log(dice.movePawn(1));
-
-// console.log(dice.roll(5));
-
-
-
-
