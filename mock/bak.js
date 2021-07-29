@@ -17,82 +17,70 @@ class Dice {
 
     rollerHasActivePawn = false
 
-    roll(mockScore = null, test = '') {
-
+	roll(mockScore = null, test = '') {
+        
         let count = mockScore || this.randomCount();
         this.roller = this.eligibleUnit
         
-        if (this.eligibleUnit == 0) {
-            if (!this.score[this.roller].unused.some(e => e == 6)) {
-                if (count == 6) {
-                    this.resetFullScore(false)
-                }
+        
+        
+        if(!this.rollerHasActivePawn && count != 6) {
+            if(!_.size(this.getScore()?.unused)) {
+                this.turnNext();
+                return this.getScore();
             }
-            
-        } 
-       
-        if (this.isBreakForNext) {
-            if (this.rollerHasActivePawn) {
-                if (this.sixCarrier != 3) {
-                    throw Error('Pawn move required!')
-                }
-            } else {
-                throw Error('Pawn move required!')
-            }
-        }
-        
-
-        if (count == 6) {
-            this.pushScore(count)
-            this.sixCarrier = this.score[this.roller].unused.filter(e => e === 6).length
-        }
-        
-        // Turn next without remarking
-    
-        // if six carrier has 3 item applicable for active inactive roller
-        
-        if (this.sixCarrier === 3) {
-			this.reInitScore()
-			this.sixCarrier = 0;
-			this.turnNext();
-			this.isBreakForNext = false;
-            return;
-        }
-        
-
-        // If Roller doesn't have any active pawn  
-        if (!this.rollerHasActivePawn) {
-            
-            
-            
-            // Determine empty carrier and count is not six move to next roller
-            if (!this.sixCarrier && count != 6) {
+            if(this.sixCarrier == 3) {
                 this.reInitScore();
                 this.turnNext();
-                return;
+                return this.getScore()
             }
-            else {
-                this.sixCarrier = this.score[this.roller].unused.filter(e => e === 6).length;
+        }
+        
+
+        if(!this.rollerHasActivePawn) {
+            if(this.isBreakForNext && count == 6) {
+                this.isBreakForNext = false;
+                if(this.sixCarrier == 3) this.sixCarrier = 0;
             }
             
-
-        }
-        
-
-         // push score
-        if (count != 6) {
-            this.pushScore(count)
-            this.isBreakForNext = true;
-            return this.turnNext()
         }
         
         
+		if (this.isBreakForNext) {
+			throw Error('Pawn Move required!');
+		}
+        
+        if(this.isRoundCompleted) 
+			this.resetFullScore();
+    
+           if(this.sixCarrier == 3) {
+            this.reInitScore();
+            this.turnNext();
+        }
+    
+        this.score[this.eligibleUnit]['unused'] = [...this.score[this.eligibleUnit]['unused'], count]
+        this.isRoundCompleted = false
+
+        
+        
+        
+        if(count == 6) {
+            this.sixCarrier += 1
+            if(this.sixCarrier == 3) {
+                this.reInitScore();
+                this.turnNext();
+            }
+            return this.getScore();
+        }
+        
+        this.sixCarrier = 0;
+
+        this.turnNext();
+        return this.getScore();
     }
 
-    pushScore(count) {
-        
-        this.score[this.eligibleUnit].unused = [...this.score[this.eligibleUnit].unused, count]
-        
+	pushScore(count) {
+		this.score[this.eligibleUnit]['unused'].push(count)
 	}
 
 	getScore() {
@@ -101,11 +89,8 @@ class Dice {
 
 	movePawn(count, pawn) {
 		
-        let { used, unused } = this.score[this.roller];
-        if (count === 6) {
-            this.sixCarrier--;
-        }
-        
+		let { used, unused } = this.score[this.roller];
+
 		if (!unused.includes(count)) {
 			this.isBreakForNext = true;
 			throw Error('DON\'T be bad I\'m your dad!');
@@ -132,19 +117,19 @@ class Dice {
 
     turnNext() {
 
-        if (this.eligibleUnit == 3) {
+        if(this.eligibleUnit == 3) {
             this.eligibleUnit = 0;
             this.isRoundCompleted = true;
             return this.isBreakForNext = true;
         }
-		this.isRoundCompleted = false;
+		
         this.eligibleUnit++;
-        
 		this.isBreakForNext = !!_.size(this.getScore()?.unused);
         return;
     }
 
     resetFullScore(isRountIncrement = true) {
+        const e = { used: [], unused: [] }
         this.score = { 
             0: { used: [], unused: [] }, 
             1: { used: [], unused: [] }, 
@@ -209,7 +194,7 @@ class Board {
         ];
     }
 
-    safe = [ 1, 9, 14, 22, 27, 35, 40, 49, 53, 54, 55, 56 ];
+    safe = [ 1, 8, 13, 21, 26, 34, 39, 48, 52 ];
 
     currentRoller = 0;
 
@@ -231,9 +216,9 @@ class Board {
 
     rollTheDice(mock, test) {
         this.currentRoller = this.dice.eligibleUnit;
-        
         this.dice.rollerHasActivePawn = this.rollerHasActivePawn();
         this.dice.roll(mock, test)
+        
         
         return this.dice.getScore()
         
@@ -254,63 +239,103 @@ class Board {
 
 const board = new Board(new Dice);
 
-console.log(board.eligibleRoller());
-
 // 0
 console.log(board.rollTheDice(1));
-console.log(board.eligibleRoller());
-
-
+// 1
 console.log(board.rollTheDice(6));
 console.log(board.rollTheDice(5));
 
-console.log(board.dice.getScore());
+
+
 console.log(board.moveThePawn(6, 0));
 console.log(board.moveThePawn(5, 0));
-console.log(board.dice.getScore());
+// 2
 console.log(board.eligibleRoller());
+ 
 console.log(board.rollTheDice(5));
+console.log(board.eligibleRoller());
+console.log(board.rollTheDice(6));
+console.log(board.rollTheDice(6));
+console.log(board.rollTheDice(6));
+
 
 console.log(board.eligibleRoller());
-console.log(board.rollTheDice(6));
-console.log(board.rollTheDice(6));
-console.log(board.rollTheDice(1));
+
+console.log(board.rollTheDice(6)); 
+console.log(board.rollTheDice(6)); 
+console.log(board.rollTheDice(5)); 
+
+console.log(board.eligibleRoller());
+console.log(board.moveThePawn(6, 0));
+console.log(board.moveThePawn(6, 0));
+console.log(board.moveThePawn(5, 0));
+
+console.log(board.rollTheDice(6)); 
+console.log(board.rollTheDice(5)); 
 
 console.log(board.moveThePawn(6, 1));
-console.log(board.moveThePawn(6, 1));
-console.log(board.moveThePawn(1, 1));
-
-console.log(board.rollTheDice(1));
-
-
-
-console.log(board.rollTheDice(6));
-console.log(board.rollTheDice(6));
-console.log(board.rollTheDice(5));
-
-board.moveThePawn(6, 0)
-board.moveThePawn(5, 0)
-board.moveThePawn(6, 1)
-
-
-console.log(board.eligibleRoller());
-console.log(board.rollTheDice(6));
-console.log(board.rollTheDice(5));
-board.moveThePawn(6, 1)
-board.moveThePawn(5, 0)
-console.log(board.dice.getScore());
-
-console.log(board.eligibleRoller());
-console.log(board.rollTheDice(1));
-console.log(board.moveThePawn(1, 1));
+console.log(board.moveThePawn(5, 0));
 
 console.log(board.eligibleRoller());
 
-console.log(board.rollTheDice(6));
-console.log(board.rollerHasActivePawn());
-console.log(board.rollTheDice(1));
 
+console.log(board.rollTheDice(6)); 
+console.log(board.rollTheDice(6)); 
+console.log(board.rollTheDice(6));
+
+console.log(board.rollTheDice(6));
 console.log(board.dice.score);
+console.log(board.rollTheDice(6)); 
+console.log(board.rollTheDice(6)); 
 
 
-console.log(board.dice);
+
+// const board = {
+//     safe: [ 1, 8, 13, 21, 26, 34, 39, 48, 52 ],
+
+//     currentRoller: 0,
+
+//     rollerHasActivePawn() {
+//         return this.rollers[this.currentRoller].some(pawn => pawn.isActive);
+//     },
+
+//     rollerDoesntHaveActivePawn() {
+//         return !this.rollerHasActivePawn();
+//     },
+
+//     allPawnIsActive() {
+//         return this.rollers[this.currentRoller].every(pawn => pawn.isActive);
+//     },
+
+//     allPawnIsNotActive() {
+//         return this.rollers[this.currentRoller].every(pawn => !pawn.isActive);
+//     },
+
+//     rollers: {
+//         ...[0, 1, 2, 3].map(index => [0, 1, 2, 3].map(i => new Pawn(index, i)))
+//     },
+
+//     dice: new Dice(),
+
+//     rollTheDice(mock) {
+//         this.currentRoller = this.dice.eligibleUnit;
+
+//         // this.dice.rollerHasActivePawn = this.rollerHasActivePawn();
+//         const score = this.dice.roll(mock)
+
+//         return score
+//     },
+
+//     moveThePawn(count, pawnId) {
+
+//         const pawn = this.rollers[this.currentRoller].find(p => p.id === pawnId)
+
+//         this.dice.movePawn(count, pawn);
+
+//         return pawn
+//     },
+
+//     eligibleRoller() {
+//         return this.dice.eligibleUnit;
+//     }
+// }

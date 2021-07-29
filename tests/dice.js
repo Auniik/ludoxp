@@ -166,7 +166,7 @@ describe('Round 3: ', () => {
 		board.rollTheDice(6)
 		board.rollTheDice(6)
 		board.rollTheDice(6)
-		
+		console.log(board.dice.score);
 		expect(board.dice.getScore()).toEqual({ used: [], unused: [] });
 	});
 	
@@ -185,30 +185,30 @@ describe('Round 3: ', () => {
 	
 	});
 	
-	test('Check the eligible roller 2', () => {
-		expect(board.eligibleRoller()).toBe(2);
-	});
+	// test('Check the eligible roller 2', () => {
+	// 	expect(board.eligibleRoller()).toBe(2);
+	// });
 	
-	test('Dice.roll(5) by roller 2 (Won\'t active any pawn)', () => {
-		board.rollTheDice(6)
-		board.rollTheDice(6)
-		board.rollTheDice(6)
-		expect(board.dice.getScore()).toEqual({ used: [], unused: [] });
+	// test('Dice.roll(5) by roller 2 (Won\'t active any pawn)', () => {
+	// 	board.rollTheDice(6)
+	// 	board.rollTheDice(6)
+	// 	board.rollTheDice(6)
+	// 	expect(board.dice.getScore()).toEqual({ used: [], unused: [] });
 
-	});
+	// });
 	
-	test('Check the eligible roller 3', () => {
-		expect(board.eligibleRoller()).toBe(3);
-	});
+	// test('Check the eligible roller 3', () => {
+	// 	expect(board.eligibleRoller()).toBe(3);
+	// });
 	
-	test('Dice.roll(6, 6, 6) by roller 3 (Won\'t active any pawn)', () => {
-		board.rollTheDice(6)
-		board.rollTheDice(6)
-		board.rollTheDice(6)
-		expect(board.dice.getScore()).toEqual({ used: [], unused: [] });
-	});
+	// test('Dice.roll(6, 6, 6) by roller 3 (Won\'t active any pawn)', () => {
+	// 	board.rollTheDice(6)
+	// 	board.rollTheDice(6)
+	// 	board.rollTheDice(6)
+	// 	expect(board.dice.getScore()).toEqual({ used: [], unused: [] });
+	// });
 	
-	test('Is Round Completed', () => {
-		expect(board.dice.isRoundCompleted).toBe(true);
-	})
+	// test('Is Round Completed', () => {
+	// 	expect(board.dice.isRoundCompleted).toBe(true);
+	// })
 })

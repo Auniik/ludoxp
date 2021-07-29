@@ -8,72 +8,91 @@ export default class Dice {
         2: { used: [], unused: [] }, 
         3: { used: [], unused: [] } 
     }
-
     eligibleUnit = 0;
     sixCarrier = 0;
+	round = 1;
 	roller = 0
     isRoundCompleted = false;
 	isBreakForNext = false;
 
     rollerHasActivePawn = false
 
-	roll(mockScore = null) {
-        
+    roll(mockScore = null, test = '') {
+
         let count = mockScore || this.randomCount();
         this.roller = this.eligibleUnit
         
-        
-        if(!this.rollerHasActivePawn && count != 6) {
-            if(!_.size(this.getScore()?.unused)) {
-                this.turnNext();
-                return this.getScore();
+        if (this.eligibleUnit == 0) {
+            if (!this.score[this.roller].unused.some(e => e == 6)) {
+                if (count == 6) {
+                    this.resetFullScore(false)
+                }
             }
-            if(this.sixCarrier == 3) {
-                this.reInitScore();
-                this.turnNext();
-                return this.getScore()
-            }
-        }
-
-        if(!this.rollerHasActivePawn) {
-            if(this.isBreakForNext && count == 6) {
-                this.isBreakForNext = false;
-                if(this.sixCarrier == 3) this.sixCarrier = 0;
-            }
-        }
-        
-        
-		if (this.isBreakForNext) {
-			throw Error('Pawn Move required!');
-		}
-        
-        if(this.isRoundCompleted) 
-			this.resetFullScore();
-
             
-        this.pushScore(count)
-
-        this.isRoundCompleted = false
-
-        
-        
-        if(count == 6) {
-            this.sixCarrier += 1
-            if(this.sixCarrier == 3) {
-                this.reInitScore();
-                this.turnNext();
+        } 
+       
+        if (this.isBreakForNext) {
+            if (this.rollerHasActivePawn) {
+                if (this.sixCarrier != 3) {
+                    throw Error('Pawn move required!')
+                }
+            } else {
+                throw Error('Pawn move required!')
             }
-            return this.getScore();
         }
         
-        this.sixCarrier = 0;
 
-        this.turnNext();
-        return this.getScore();
+        if (count == 6) {
+            this.pushScore(count)
+            this.sixCarrier = this.score[this.roller].unused.filter(e => e === 6).length
+        }
+        
+        // Turn next without remarking
+    
+        // if six carrier has 3 item applicable for active inactive roller
+        
+        if (this.sixCarrier === 3) {
+			this.reInitScore()
+			this.sixCarrier = 0;
+			this.turnNext();
+			this.isBreakForNext = false;
+            return;
+        }
+        
+
+        // If Roller doesn't have any active pawn  
+        if (!this.rollerHasActivePawn) {
+            
+            
+            
+            // Determine empty carrier and count is not six move to next roller
+            if (!this.sixCarrier && count != 6) {
+                this.reInitScore();
+                this.turnNext();
+                return;
+            }
+            else {
+                this.sixCarrier = this.score[this.roller].unused.filter(e => e === 6).length;
+            }
+            
+
+        }
+        
+
+         // push score
+        if (count != 6) {
+            this.pushScore(count)
+            this.isBreakForNext = true;
+            return this.turnNext()
+        }
+        
+        
     }
 
-	pushScore(count) {
-		this.score[this.eligibleUnit]['unused'].push(count)
+    pushScore(count) {
+        
+        this.score[this.eligibleUnit].unused = [...this.score[this.eligibleUnit].unused, count]
+        
 	}
 
 	getScore() {
@@ -82,8 +101,11 @@ export default class Dice {
 
 	movePawn(count, pawn) {
 		
-		let { used, unused } = this.score[this.roller];
-
+        let { used, unused } = this.score[this.roller];
+        if (count === 6) {
+            this.sixCarrier--;
+        }
+        
 		if (!unused.includes(count)) {
 			this.isBreakForNext = true;
 			throw Error('DON\'T be bad I\'m your dad!');
@@ -110,20 +132,27 @@ export default class Dice {
 
     turnNext() {
 
-        if(this.eligibleUnit == 3) {
+        if (this.eligibleUnit == 3) {
             this.eligibleUnit = 0;
             this.isRoundCompleted = true;
             return this.isBreakForNext = true;
         }
-		
+		this.isRoundCompleted = false;
         this.eligibleUnit++;
+        
 		this.isBreakForNext = !!_.size(this.getScore()?.unused);
         return;
     }
 
-    resetFullScore() {
-        const e = { used: [], unused: [] }
-        this.score = { 0: e, 1: e, 2: e, 3: e }
+    resetFullScore(isRountIncrement = true) {
+        this.score = { 
+            0: { used: [], unused: [] }, 
+            1: { used: [], unused: [] }, 
+            2: { used: [], unused: [] }, 
+            3: { used: [], unused: [] } 
+        }
+        if(isRountIncrement)
+            this.round++;
     }
 
 	reInitScore() {

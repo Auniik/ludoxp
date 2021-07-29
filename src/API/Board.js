@@ -34,9 +34,11 @@ class Board {
 
     rollTheDice(mock) {
         this.currentRoller = this.dice.eligibleUnit;
+
+        this.dice.rollerHasActivePawn = this.rollerHasActivePawn();
         
         this.dice.roll(mock)
-        this.dice.rollerHasActivePawn = this.rollerHasActivePawn();
+        
         
         return this.dice.getScore()
         
