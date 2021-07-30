@@ -136,9 +136,9 @@
 <script>
     import Dice from './Dice.vue'
     import DiceMixin from './../../core/Dice'
+    import { updateBoard } from '../../API/Bootstrap'
     const board = require('../../API/Bootstrap').default
 
-    board.rollTheDice(1)
 
     export default {
         name: 'Board',
@@ -147,7 +147,7 @@
         },
         data() {
             return {
-                visibleDice: 0,
+                visibleDice: board.eligibleRoller(),
                 dice: new DiceMixin,
 
                 score: {
@@ -185,23 +185,26 @@
         },
         methods: {
             roll(rollerId) {
-                if (rollerId != this.dice.eligibleUnit) {
+                if (rollerId != board.eligibleRoller()) {
                     return;
                 }
             
                 try {
-                    const {unused} = this.dice.roll()
-                    this.score[rollerId] = [...unused]
+                    const {unused} = board.rollTheDice()
+                    this.score[rollerId] =  !unused.length ? [board.currentRollScore] : unused
 
-                    this.scoreHistory = this.dice.score
+                    this.scoreHistory = board.dice.score
 
-                    if(!this.dice.isBreakForNext) {
-                        this.visibleDice = this.dice.eligibleUnit
+                    if(!board.isPawnMoveRequired()) {
+                        this.visibleDice = board.eligibleRoller()
                     }
+                    
                     
                 } catch(e) {
                     console.log(e);
                 }
+                updateBoard(board)
+                console.log(board);
 
             },
 
@@ -228,6 +231,10 @@
         },
         computed: {
         
+        },
+
+        mounted() {
+
         }
 
     }

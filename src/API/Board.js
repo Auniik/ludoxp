@@ -15,6 +15,7 @@ class Board {
     safe = [ 1, 9, 14, 22, 27, 35, 40, 49, 53, 54, 55, 56 ];
 
     currentRoller = 0;
+    currentRollScore = [];
 
     rollerHasActivePawn() {
         return this.rollers[this.currentRoller].some(pawn => pawn.isActive);
@@ -33,15 +34,25 @@ class Board {
     }
 
     rollTheDice(mock) {
+
         this.currentRoller = this.dice.eligibleUnit;
 
         this.dice.rollerHasActivePawn = this.rollerHasActivePawn();
         
-        this.dice.roll(mock)
+        this.currentRollScore = this.dice.roll(mock)
         
         
         return this.dice.getScore()
         
+    }
+
+    getScore() {
+        return this.dice.getScore()
+    }
+
+
+    getRoundScore() {
+        return this.dice.score;
     }
 
     moveThePawn(count, pawnId) {
@@ -54,6 +65,10 @@ class Board {
 
     eligibleRoller() {
         return this.dice.eligibleUnit;
+    }
+
+    isPawnMoveRequired() {
+        return this.dice.isPawnMoveRequired();
     }
 
     currentRound() {

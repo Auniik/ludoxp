@@ -1,6 +1,17 @@
 let board = require('./Board').default
 
 
+
+export const updateBoard = (board) => {
+	localStorage.setItem('_board', JSON.stringify(board));
+}
+
+export const resetBoard = () => {
+	localStorage.setItem('_board', JSON.stringify(require('./Board').default));
+}
+
+
+
 if (localStorage.getItem('_board')) {
 	
 	var blueprint = JSON.parse(localStorage.getItem('_board'));
@@ -23,15 +34,6 @@ if (localStorage.getItem('_board')) {
 
 	updateBoard(board);
 
-}
-
-
-export const updateBoard = (board) => {
-	localStorage.setItem('_board', JSON.stringify(board));
-}
-
-export const resetBoard = () => {
-	localStorage.setItem('_board', JSON.stringify(require('./Board').default));
 }
 
 

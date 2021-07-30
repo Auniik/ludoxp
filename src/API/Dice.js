@@ -34,16 +34,20 @@ export default class Dice {
             
         } 
        
-        if (this.isBreakForNext) {
-            if (this.rollerHasActivePawn) {
-                if (this.sixCarrier != 3) {
-                    throw Error('Pawn move required!')
-                }
-            } else {
-                throw Error('Pawn move required!')
-            }
+        // if (this.isBreakForNext) {
+        //     if (this.rollerHasActivePawn) {
+        //         if (this.sixCarrier != 3) {
+        //             this.isPawnMoveRequired = true;
+        //             throw Error('Pawn move required!')
+        //         }
+        //     } else if (this.sixCarrier) {
+        //         this.isPawnMoveRequired = true;
+        //         throw Error('Pawn move required!')
+        //     }
+        // }
+        if (this.isPawnMoveRequired()) {
+            throw Error('Pawn move required!')
         }
-        
 
         if (count == 6) {
             this.pushScore(count)
@@ -59,7 +63,7 @@ export default class Dice {
 			this.sixCarrier = 0;
 			this.turnNext();
 			this.isBreakForNext = false;
-            return;
+            return count;
         }
         
 
@@ -72,7 +76,7 @@ export default class Dice {
             if (!this.sixCarrier && count != 6) {
                 this.reInitScore();
                 this.turnNext();
-                return;
+                return count;
             }
             else {
                 this.sixCarrier = this.score[this.roller].unused.filter(e => e === 6).length;
@@ -86,10 +90,37 @@ export default class Dice {
         if (count != 6) {
             this.pushScore(count)
             this.isBreakForNext = true;
-            return this.turnNext()
+            this.turnNext()
+            return count
         }
         
         
+    }
+
+    isPawnMoveRequired() {
+
+        // if (this.isBreakForNext) {
+        //     if (this.rollerHasActivePawn) {
+        //         if (this.sixCarrier != 3) {
+        //             this.isPawnMoveRequired = true;
+        //             throw Error('Pawn move required!')
+        //         }
+        //     } else if (this.sixCarrier) {
+        //         this.isPawnMoveRequired = true;
+        //         throw Error('Pawn move required!')
+        //     }
+        // }
+
+        if (this.isBreakForNext) {
+            if (this.rollerHasActivePawn) {
+                if (this.sixCarrier != 3) {
+                    return true;
+                }
+            } else if (this.sixCarrier) {
+                return true;
+            }
+        }
+        return false;
     }
 
     pushScore(count) {

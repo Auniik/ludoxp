@@ -28,14 +28,8 @@ class Dice {
             
         } 
        
-        if (this.isBreakForNext) {
-            if (this.rollerHasActivePawn) {
-                if (this.sixCarrier != 3) {
-                    throw Error('Pawn move required!')
-                }
-            } else {
-                throw Error('Pawn move required!')
-            }
+        if (this.isPawnMoveRequired()) {
+            throw Error('Pawn move required!')
         }
         
 
@@ -84,6 +78,19 @@ class Dice {
         }
         
         
+    }
+
+    isPawnMoveRequired() {
+        if (this.isBreakForNext) {
+            if (this.rollerHasActivePawn) {
+                if (this.sixCarrier != 3) {
+                    return true;
+                }
+            } else if (this.sixCarrier) {
+                return true;
+            }
+        }
+        return false;
     }
 
     pushScore(count) {
@@ -259,7 +266,12 @@ const dice = new Dice(store)
 const board = new Board(dice);
 
 
-
+console.log(board.rollTheDice(1));
+console.log(board.rollTheDice(1));
+console.log(board.rollTheDice(1));
+console.log(board.rollTheDice(1));
+console.log(board.rollTheDice(6));
+console.log(board.rollTheDice(1));
 // console.log(board.eligibleRoller());
 
 // // 0
