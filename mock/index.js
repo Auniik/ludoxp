@@ -2,11 +2,8 @@ const _ = require('lodash')
 
 class Dice {
 
-	score = { 
-        0: { used: [], unused: [] }, 
-        1: { used: [], unused: [] }, 
-        2: { used: [], unused: [] }, 
-        3: { used: [], unused: [] } 
+    constructor(store) {
+        this.score = store;
     }
     eligibleUnit = 0;
     sixCarrier = 0;
@@ -252,65 +249,74 @@ class Board {
     }
 }
 
-const board = new Board(new Dice);
-
-console.log(board.eligibleRoller());
-
-// 0
-console.log(board.rollTheDice(1));
-console.log(board.eligibleRoller());
-
-
-console.log(board.rollTheDice(6));
-console.log(board.rollTheDice(5));
-
-console.log(board.dice.getScore());
-console.log(board.moveThePawn(6, 0));
-console.log(board.moveThePawn(5, 0));
-console.log(board.dice.getScore());
-console.log(board.eligibleRoller());
-console.log(board.rollTheDice(5));
-
-console.log(board.eligibleRoller());
-console.log(board.rollTheDice(6));
-console.log(board.rollTheDice(6));
-console.log(board.rollTheDice(1));
-
-console.log(board.moveThePawn(6, 1));
-console.log(board.moveThePawn(6, 1));
-console.log(board.moveThePawn(1, 1));
-
-console.log(board.rollTheDice(1));
+const store = { 
+    0: { used: [], unused: [] }, 
+    1: { used: [], unused: [] }, 
+    2: { used: [], unused: [] }, 
+    3: { used: [], unused: [] } 
+}
+const dice = new Dice(store)
+const board = new Board(dice);
 
 
 
-console.log(board.rollTheDice(6));
-console.log(board.rollTheDice(6));
-console.log(board.rollTheDice(5));
+// console.log(board.eligibleRoller());
 
-board.moveThePawn(6, 0)
-board.moveThePawn(5, 0)
-board.moveThePawn(6, 1)
+// // 0
+// console.log(board.rollTheDice(1));
+// console.log(board.eligibleRoller());
 
 
-console.log(board.eligibleRoller());
-console.log(board.rollTheDice(6));
-console.log(board.rollTheDice(5));
-board.moveThePawn(6, 1)
-board.moveThePawn(5, 0)
-console.log(board.dice.getScore());
+// console.log(board.rollTheDice(6));
+// console.log(board.rollTheDice(5));
 
-console.log(board.eligibleRoller());
-console.log(board.rollTheDice(1));
-console.log(board.moveThePawn(1, 1));
+// console.log(board.dice.getScore());
+// console.log(board.moveThePawn(6, 0));
+// console.log(board.moveThePawn(5, 0));
+// console.log(board.dice.getScore());
+// console.log(board.eligibleRoller());
+// console.log(board.rollTheDice(5));
 
-console.log(board.eligibleRoller());
+// console.log(board.eligibleRoller());
+// console.log(board.rollTheDice(6));
+// console.log(board.rollTheDice(6));
+// console.log(board.rollTheDice(1));
 
-console.log(board.rollTheDice(6));
-console.log(board.rollerHasActivePawn());
-console.log(board.rollTheDice(1));
+// console.log(board.moveThePawn(6, 1));
+// console.log(board.moveThePawn(6, 1));
+// console.log(board.moveThePawn(1, 1));
 
-console.log(board.dice.score);
+// console.log(board.rollTheDice(1));
 
 
-console.log(board.dice);
+
+// console.log(board.rollTheDice(6));
+// console.log(board.rollTheDice(6));
+// console.log(board.rollTheDice(5));
+
+// board.moveThePawn(6, 0)
+// board.moveThePawn(5, 0)
+// board.moveThePawn(6, 1)
+
+
+// console.log(board.eligibleRoller());
+// console.log(board.rollTheDice(6));
+// console.log(board.rollTheDice(5));
+// board.moveThePawn(6, 1)
+// board.moveThePawn(5, 0)
+// console.log(board.dice.getScore());
+
+// console.log(board.eligibleRoller());
+// console.log(board.rollTheDice(1));
+// console.log(board.moveThePawn(1, 1));
+
+// console.log(board.eligibleRoller());
+
+// console.log(board.rollTheDice(6));
+// console.log(board.rollerHasActivePawn());
+// console.log(board.rollTheDice(1));
+
+// console.log(board.dice.score);
+
+
+// console.log(board.dice);

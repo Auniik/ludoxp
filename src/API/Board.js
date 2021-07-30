@@ -61,6 +61,4 @@ class Board {
     }
 }
 
-export default new Board(
-	new Dice
-)
+export default new Board(new Dice)

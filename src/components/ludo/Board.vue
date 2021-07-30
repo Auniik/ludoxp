@@ -136,6 +136,9 @@
 <script>
     import Dice from './Dice.vue'
     import DiceMixin from './../../core/Dice'
+    const board = require('../../API/Bootstrap').default
+
+    board.rollTheDice(1)
 
     export default {
         name: 'Board',
@@ -177,7 +180,7 @@
                     "43-30-17-4", "34-21-8-47", "x-x-x-54", "42-29-16-3", "35-22-9-48", 
                     "x-x-x-53", "41-28-15-2", "36-23-10-49", "x-x-x-52", "40-27-14-1", 
                     "37-24-11-50", "38-25-12-51", "39-26-13-x",
-                ]
+                ],
             }
         },
         methods: {

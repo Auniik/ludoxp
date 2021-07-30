@@ -31,3 +31,5 @@ export default class Pawn {
         }
     }
 }
+
+export const IPawn = Pawn;

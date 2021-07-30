@@ -7,6 +7,8 @@
 <script>
     import Board from './components/ludo/Board.vue'
 
+    
+
     export default {
         name: 'App',
         components: {

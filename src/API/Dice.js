@@ -1,5 +1,7 @@
 import _ from 'lodash'
 
+
+
 export default class Dice {
 
 	score = { 
@@ -8,6 +10,7 @@ export default class Dice {
         2: { used: [], unused: [] }, 
         3: { used: [], unused: [] } 
     }
+    
     eligibleUnit = 0;
     sixCarrier = 0;
 	round = 1;
@@ -163,3 +166,5 @@ export default class Dice {
         return [0, 6, 5, 4, 3, 2, 1][Math.ceil(Math.random() * 6)]
     }
 }
+
+export const IDice = Dice;
