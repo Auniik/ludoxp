@@ -22,13 +22,14 @@
             </div>
 
             <div class="board-outside">
-                <div class="room"> 
+                <div :class="`room ${rollers[0][0].color}`"> 
                     <!-- room 1 -->
-                    <div class="room-box">
-                        <div class="pawn">1</div>
-                        <div class="pawn">2</div>
-                        <div class="pawn">3</div>
-                        <div class="pawn">4</div>
+                     <div class="room-box">
+                        <div :class="`pawn ${pawn.color}`" 
+                        :key="`${pawn.id}-${pawn.color}`" 
+                        v-for="pawn of rollers[0]">
+                            {{pawn.id}}
+                        </div>
                     </div>
                 </div>
                 
@@ -36,7 +37,7 @@
                 <div class="path-v">
 
                     <div 
-                        :class="`pawn-race  ${isSafe(identity) ? 'safebox' : ''}`"
+                        :class="`pawn-race  ${isSafe(identity) ? `${rollers[1][0].color}` : ''}`"
                         :key="identity"
                         v-for="identity of aile3"
                     >
@@ -44,20 +45,21 @@
                     </div>
                 </div>
                 
-                <div class="room">
+                <div :class="`room ${rollers[1][0].color}`">
                     <!-- room 2 -->
-                    <div class="room-box">
-                        <div class="pawn">1</div>
-                        <div class="pawn">2</div>
-                        <div class="pawn">3</div>
-                        <div class="pawn">4</div>
+                     <div class="room-box">
+                        <div :class="`pawn ${pawn.color}`" 
+                        :key="`${pawn.id}-${pawn.color}`" 
+                        v-for="pawn of rollers[1]">
+                            {{pawn.id}}
+                        </div>
                     </div>
                 </div>
                 
                 <div class="path-h">
                     <!-- Base of 2 -->
                     <div 
-                        :class="`pawn-race  ${isSafe(identity) ? 'safebox' : ''}`"
+                        :class="`pawn-race  ${isSafe(identity) ? `${rollers[0][0].color}` : ''}`"
                         :key="identity"
                         v-for="identity of aile2"
                     >
@@ -72,7 +74,7 @@
                 <div class="path-h">
                     <!-- Base of 4 -->
                     <div 
-                        :class="`pawn-race  ${isSafe(identity) ? 'safebox' : ''}`"
+                        :class="`pawn-race  ${isSafe(identity) ? `${rollers[3][0].color}` : ''}`"
                         :key="identity"
                         v-for="identity of aile4"
                     >
@@ -81,19 +83,20 @@
                     </div>
                 </div>
                 
-                <div class="room">
+                <div :class="`room ${rollers[2][0].color}`">
                     <!-- room 3 -->
-                    <div class="room-box">
-                        <div class="pawn">1</div>
-                        <div class="pawn">2</div>
-                        <div class="pawn">3</div>
-                        <div class="pawn">4</div>
+                     <div class="room-box">
+                        <div :class="`pawn ${pawn.color}`" 
+                        :key="`${pawn.id}-${pawn.color}`" 
+                        v-for="pawn of rollers[2]">
+                            {{pawn.id}}
+                        </div>
                     </div>
                 </div>
                 <!-- Base of 1 -->
                 <div class="path-v">
                     <div 
-                        :class="`pawn-race  ${isSafe(identity) ? 'safebox' : ''}`"
+                        :class="`pawn-race  ${isSafe(identity) ? `${rollers[2][0].color}` : ''}`"
                         :key="identity"
                         v-for="identity of aile1"
                     >
@@ -101,13 +104,14 @@
                     </div>
                 </div>
                 
-                <div class="room">
+                <div :class="`room ${rollers[3][0].color}`">
                      <!-- room 4 -->
                      <div class="room-box">
-                        <div class="pawn">1</div>
-                        <div class="pawn">2</div>
-                        <div class="pawn">3</div>
-                        <div class="pawn">4</div>
+                        <div :class="`pawn ${pawn.color}`" 
+                        :key="`${pawn.id}-${pawn.color}`" 
+                        v-for="pawn of rollers[3]">
+                            {{pawn.id}}
+                        </div>
                     </div>
                 </div>
             
@@ -130,13 +134,16 @@
                 
             </div>
         </div>
+        <button 
+            style="padding: 20px; border: 0.5px; margin: 15px; font-size: medium; box-shadow: 1px 1px 6px #969696; background: white;" 
+            @click="resetGame">Reset
+        </button>
     </div>
 </template>
 
 <script>
     import Dice from './Dice.vue'
-    import DiceMixin from './../../core/Dice'
-    import { updateBoard } from '../../API/Bootstrap'
+    import { resetBoard, updateBoard } from '../../API/Bootstrap'
     const board = require('../../API/Bootstrap').default
 
 
@@ -148,7 +155,7 @@
         data() {
             return {
                 visibleDice: board.eligibleRoller(),
-                dice: new DiceMixin,
+                rollers: board.rollers,
 
                 score: {
                     0: [], 1: [], 2: [], 3: []
@@ -185,7 +192,7 @@
         },
         methods: {
             roll(rollerId) {
-                if (rollerId != board.eligibleRoller()) {
+                if (board.isPawnMoveRequired()) {
                     return;
                 }
             
@@ -227,6 +234,11 @@
             isAvailablePawn(identity) {
                 // console.log(identity);
                 return false;
+            },
+
+            resetGame() {
+                resetBoard(board)
+                window.location.reload()
             }
         },
         computed: {
@@ -275,7 +287,7 @@
 
     .room > .room-box {
         display: flex;
-        background: rgb(161, 170, 190);
+        background: rgb(241 240 240);
         flex-wrap: wrap;
         justify-content: space-evenly;
     }
@@ -292,20 +304,18 @@
     }
 
     .room-box > .pawn {
-        background: tomato;
         border-radius: 100%;
-        width: 15px;
-        height: 15px;
-        margin: 20px;
+        width: 16px;
+        height: 16px;
+        margin: 16px;
         padding: 5px;
-        box-shadow: -1px 2px 5px 0px #939393;
+        box-shadow: -1px 3px 5px 0px #939393;
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
     .pawn {
-        background: tomato;
         border-radius: 100%;
         width: 13px;
         height: 13px;
@@ -362,9 +372,6 @@
         justify-content: center;
         
     }
-    .safebox {
-        background-color:#95cc95 !important;
-    }
 
     .board {
         display: inline-block
@@ -378,5 +385,21 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+    }
+
+    .yellow {
+        background: rgb(226 190 92) !important;
+    }
+
+    .red {
+        background: rgb(234 113 91) !important;
+    }
+
+    .green {
+        background: rgb(118 218 135) !important;
+    }
+
+    .blue {
+        background: rgb(81 148 230) !important;
     }
 </style>
