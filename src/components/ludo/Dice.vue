@@ -83,7 +83,7 @@
         computed: {
             
             activeStyles() {
-                return this.isDiceRollable ? "color:green; box-shadow: -3px 4px 15px 0px #bfbfbf;" : ''
+                return this.isDiceRollable ? "color:green; box-shadow: #000000 -1px 3px 20px 0px" : ''
             }
         }
     }

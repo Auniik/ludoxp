@@ -24,13 +24,9 @@
             <div class="board-outside">
                 <div :class="`room ${rollers[0][0].color}`"> 
                     <!-- room 1 -->
-                     <div class="room-box">
-                        <div :class="`pawn ${pawn.color}`" 
-                        :key="`${pawn.id}-${pawn.color}`" 
-                        v-for="pawn of rollers[0]">
-                            {{pawn.id}}
-                        </div>
-                    </div>
+                    <Pawns @clicked="pawnClickedFromRoom(0, $event)" 
+                        :pawns="rollers[0]"
+                    />
                 </div>
                 
                 <!-- base of 3 -->
@@ -47,13 +43,9 @@
                 
                 <div :class="`room ${rollers[1][0].color}`">
                     <!-- room 2 -->
-                     <div class="room-box">
-                        <div :class="`pawn ${pawn.color}`" 
-                        :key="`${pawn.id}-${pawn.color}`" 
-                        v-for="pawn of rollers[1]">
-                            {{pawn.id}}
-                        </div>
-                    </div>
+                    <Pawns @clicked="pawnClickedFromRoom(1, $event)" 
+                        :pawns="rollers[1]"
+                    />
                 </div>
                 
                 <div class="path-h">
@@ -85,14 +77,11 @@
                 
                 <div :class="`room ${rollers[2][0].color}`">
                     <!-- room 3 -->
-                     <div class="room-box">
-                        <div :class="`pawn ${pawn.color}`" 
-                        :key="`${pawn.id}-${pawn.color}`" 
-                        v-for="pawn of rollers[2]">
-                            {{pawn.id}}
-                        </div>
-                    </div>
+                    <Pawns @clicked="pawnClickedFromRoom(2, $event)" 
+                        :pawns="rollers[2]"
+                    />
                 </div>
+
                 <!-- Base of 1 -->
                 <div class="path-v">
                     <div 
@@ -100,19 +89,19 @@
                         :key="identity"
                         v-for="identity of aile1"
                     >
-                        {{isAvailablePawn(identity) ? `<div class="pawn"></div>` : ''}}
+                        <div 
+                            v-if="isAvailablePawn(0, identity)" 
+                            :class="`pawn`" >
+                            test
+                        </div>
                     </div>
                 </div>
                 
                 <div :class="`room ${rollers[3][0].color}`">
                      <!-- room 4 -->
-                     <div class="room-box">
-                        <div :class="`pawn ${pawn.color}`" 
-                        :key="`${pawn.id}-${pawn.color}`" 
-                        v-for="pawn of rollers[3]">
-                            {{pawn.id}}
-                        </div>
-                    </div>
+                    <Pawns @clicked="pawnClickedFromRoom(3, $event)" 
+                        :pawns="rollers[3]"
+                    />
                 </div>
             
             </div>
@@ -134,6 +123,11 @@
                 
             </div>
         </div>
+        <input 
+            type="text" 
+            v-model="rollScore"
+            style="padding: 14px; outline: 0px; font-size: 20px; border: 1px solid;"
+        />
         <button 
             style="padding: 20px; border: 0.5px; margin: 15px; font-size: medium; box-shadow: 1px 1px 6px #969696; background: white;" 
             @click="resetGame">Reset
@@ -143,6 +137,7 @@
 
 <script>
     import Dice from './Dice.vue'
+    import Pawns from './Pawns.vue'
     import { resetBoard, updateBoard } from '../../API/Bootstrap'
     const board = require('../../API/Bootstrap').default
 
@@ -150,12 +145,14 @@
     export default {
         name: 'Board',
         components: {
-            Dice
+            Dice, Pawns
         },
         data() {
             return {
                 visibleDice: board.eligibleRoller(),
                 rollers: board.rollers,
+
+                rollScore: 1,
 
                 score: {
                     0: [], 1: [], 2: [], 3: []
@@ -192,12 +189,18 @@
         },
         methods: {
             roll(rollerId) {
-                if (board.isPawnMoveRequired()) {
+
+                if (board.eligibleRoller() != rollerId) {
                     return;
                 }
             
+                if (board.isPawnMoveRequired()) {
+                    return;
+                }
+
+            
                 try {
-                    const {unused} = board.rollTheDice()
+                    const {unused} = board.rollTheDice(parseInt(this.rollScore, 10))
                     this.score[rollerId] =  !unused.length ? [board.currentRollScore] : unused
 
                     this.scoreHistory = board.dice.score
@@ -211,7 +214,6 @@
                     console.log(e);
                 }
                 updateBoard(board)
-                console.log(board);
 
             },
 
@@ -231,9 +233,22 @@
                 || identity.includes('56')       
             },
 
-            isAvailablePawn(identity) {
-                // console.log(identity);
-                return false;
+            isAvailablePawn(player, pathIdentity) {
+                const position = pathIdentity.split('-')[player];
+                this.rollers[player]
+                // return false;
+            },
+
+            pawnClickedFromRoom(room, pawn) {
+                console.log(room, pawn);
+
+                if(board.currentRoller == room) {
+                    if(board.getScore().unused.some(e => e === 6)) {
+                        board.moveThePawn(6, pawn.id)
+                    }
+                    
+                }
+                
             },
 
             resetGame() {
@@ -254,9 +269,9 @@
 </script>
 
 
-<style scoped>
+<style >
     .container {
-        background: #222329;
+        background: linear-gradient(to right, rgba(222 97 97), rgba(123 38 235));
         display: flex;
         user-select: none;
     }
@@ -271,6 +286,7 @@
         flex-wrap: wrap;
         align-content: space-between;
         justify-content: space-between;
+        box-shadow: 1px 1px 50px 0px #272727;
     }
 
     .board-outside > .room {
@@ -287,7 +303,7 @@
 
     .room > .room-box {
         display: flex;
-        background: rgb(241 240 240);
+        background: rgb(0 0 0 / 12%);
         flex-wrap: wrap;
         justify-content: space-evenly;
     }
@@ -309,7 +325,7 @@
         height: 16px;
         margin: 16px;
         padding: 5px;
-        box-shadow: -1px 3px 5px 0px #939393;
+        box-shadow: -1px 3px 5px 0px #191818;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -352,7 +368,7 @@
     .pawn-race {
         display: flex;
         border-radius: 5px;
-        background: #ffc9ca;
+        background: #cfcfcf;
         align-items: center;
         border: 0.5px solid #ffffff;
         font-size: 8px;
@@ -388,18 +404,17 @@
     }
 
     .yellow {
-        background: rgb(226 190 92) !important;
+        background: linear-gradient(to right, #f2994a, #f2c94c) !important;
     }
-
     .red {
-        background: rgb(234 113 91) !important;
+        background: linear-gradient(to right, #c75c82, #bb5c5c) !important;
     }
 
     .green {
-        background: rgb(118 218 135) !important;
+        background: linear-gradient(to right, #76b852, #8dc26f) !important; 
     }
 
     .blue {
-        background: rgb(81 148 230) !important;
+        background: linear-gradient(to right,  #6dd5ed, #31b4d4) !important;
     }
 </style>
