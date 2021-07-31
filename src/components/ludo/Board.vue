@@ -60,7 +60,7 @@
                 </div>
                 
                 <div class="path-c">
-                     path center
+                    
                 </div>
                 
                 <div class="path-h">
@@ -271,7 +271,6 @@
 
 <style >
     .container {
-        background: linear-gradient(to right, rgba(222 97 97), rgba(123 38 235));
         display: flex;
         user-select: none;
     }
@@ -345,6 +344,7 @@
     .pawn-race > .pawn {
         display: flex;
     }
+    
 
     .board-outside > .path-h {
         width: 180px;
@@ -357,7 +357,7 @@
     }
 
     .board-outside > .path-c {
-        background-color: #beff69;
+        background: linear-gradient(to bottom, #00a542a1, #76f68b);;
         text-align: center;
         width: 100px;
         display: flex;
@@ -416,5 +416,8 @@
 
     .blue {
         background: linear-gradient(to right,  #6dd5ed, #31b4d4) !important;
+    }
+    body {
+        background: linear-gradient(to bottom, #2c3e50, #4ca1af) no-repeat center center fixed;
     }
 </style>
